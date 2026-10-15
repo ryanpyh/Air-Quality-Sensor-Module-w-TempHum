@@ -33,9 +33,14 @@ An Arduino UNO R4 WiFi module that tracks air quality, temperature, humidity, an
 ## Getting started
 
 1. Install the **Arduino UNO R4 Boards** core in the Arduino IDE.
-2. In Library Manager, install `BSEC2 Software Library`, `Adafruit GFX Library`, `Adafruit SSD1306`, `ArduinoGraphics`, and `ArduinoBLE`.
-3. Open `BME680_Display_wIAQ.ino`, select **Arduino UNO R4 WiFi**, and upload.
-4. Open the Serial Monitor at 115200 baud to watch the readings.
+2. In Library Manager, install:
+   - `BSEC2 Software Library`
+   - `Adafruit GFX Library`
+   - `Adafruit SSD1306`
+   - `ArduinoGraphics`
+   - `ArduinoBLE`.
+4. Open `BME680_Display_wIAQ.ino`, select **Arduino UNO R4 WiFi**, and upload.
+5. Open the Serial Monitor at 115200 baud to watch the readings.
 
 BSEC2 uses Bosch's own license, so install it through Library Manager and do not commit it to this repo.
 
