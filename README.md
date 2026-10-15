@@ -38,7 +38,7 @@ An Arduino UNO R4 WiFi module that tracks air quality, temperature, humidity, an
    - `Adafruit GFX Library`
    - `Adafruit SSD1306`
    - `ArduinoGraphics`
-   - `ArduinoBLE`.
+   - `ArduinoBLE`
 4. Open `BME680_Display_wIAQ.ino`, select **Arduino UNO R4 WiFi**, and upload.
 5. Open the Serial Monitor at 115200 baud to watch the readings.
 
@@ -46,9 +46,9 @@ BSEC2 uses Bosch's own license, so install it through Library Manager and do not
 
 ## How it works
 
-**Air quality.** The BME680 heats a metal-oxide surface, and VOCs in the air change its electrical resistance. BSEC2 converts that resistance into an IAQ index, where 0 to 50 is excellent, 101 to 150 is lightly polluted, and above 250 is heavily polluted. The CO2 value is an estimate inferred from VOCs, not a direct measurement.
+**Air quality.** The BME680 uses a heated metal-oxide gas sensor whose electrical resistance changes in response to VOCs and other gases in the surrounding air. The BSEC2 package converts that resistance into an IAQ index, where 0 to 50 indicates excellent air quality, 101 to 150 is lightly polluted, and above 250 is heavily polluted. The CO2 value is an estimate inferred from VOCs rather than a direct measurement.
 
-**Calibration.** The sensor needs time to learn what clean air looks like, from several minutes to a few hours. The OLED header shows progress:
+**Calibration.** The sensor needs time to calibrate to a baseline for clean air, this can take from several minutes to a few hours. The OLED header shows progress:
 
 | Header | Meaning |
 |---|---|
@@ -56,13 +56,13 @@ BSEC2 uses Bosch's own license, so install it through Library Manager and do not
 | `ENV [CALIBRATING]` | IAQ shown, still settling |
 | `ROOM ENVIRONMENT` | Fully calibrated |
 
-**Feels-like temperature.** The sketch computes the NWS heat index, which accounts for humidity. High humidity slows sweat evaporation, the body's main cooling path, so the same air temperature feels warmer. The formulas use temperature $T$ in °F and relative humidity $RH$ in %, and the result is converted to °C for display.
+**Feels-like temperature.** The sketch computes the NWS heat index ([equations from NOAA's Weather Prediction Center](https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml)), which accounts for humidity. The formulas use temperature $T$ in °F and relative humidity $RH$ in %, and the result is converted to °C for display.
 
 1. Simple estimate (Steadman). If it is below 80 °F, this is the final answer:
 
 $$HI = 0.5\left[T + 61 + 1.2\,(T - 68) + 0.094\,RH\right]$$
 
-2. Otherwise, use the full regression (Rothfusz):
+2. Otherwise, a full regression (Rothfusz) is applied:
 
 $$
 \begin{aligned}
@@ -91,9 +91,9 @@ Finally, $HI_{\,°C} = (HI - 32) \times \tfrac{5}{9}$.
 | 25 to 27 C | Orange |
 | 27 C and above | Red |
 
-**Night mode.** The light sensor output rises as the room darkens. Night mode starts above 5700 and ends below 5300 (14-bit reading). The gap between the two thresholds prevents flicker when the light level hovers near the switching point. The LED matrix stays on at night.
+**Night mode.** The light sensor voltage output rises as ambient light decreases. Night mode activates when the 14-bit sensor reading exceeds 5700 and deactivates when it falls below 5300. A deadband/hysteresis gap is implemented to prevent rapid switching/flickering when the light level hovers near the switching point. The UNO R4 LED matrix stays on when night mode is active.
 
-**Bluetooth.** The device appears as `RP-UNO_R4_Sensor` and sends IAQ, temperature, humidity, and pressure every 2 s while connected. Values are 32-bit floats, so choose the **float32** format in a BLE app such as nRF Connect.
+**Bluetooth.** The device advertises itself as `RP-UNO_R4_Sensor` via Bluetooth Low Energy (BLE) and sends IAQ, temperature, humidity, and pressure every 2 s while connected. Values are 32-bit floats, so choose the **float32** format in a BLE app such as nRF Connect.
 
 ## Tuning
 
@@ -114,4 +114,4 @@ Change these constants at the top of the sketch:
 
 ## License
 
-Add your preferred license here. BSEC2 keeps Bosch's license regardless.
+This project is licensed under the terms of the MIT License.
