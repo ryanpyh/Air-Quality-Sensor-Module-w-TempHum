@@ -48,6 +48,21 @@ BSEC2 uses Bosch's own license, so install it through Library Manager and do not
 
 **Air quality.** The BME680 uses a heated metal-oxide gas sensor whose electrical resistance changes in response to VOCs and other gases in the surrounding air. The BSEC2 package converts that resistance into an IAQ index, where 0 to 50 indicates excellent air quality, 101 to 150 is lightly polluted, and above 250 is heavily polluted. The CO2 value is an estimate inferred from VOCs rather than a direct measurement.
 
+**Display.** Each reading follows the same path: BME680, then BSEC2 processing, then the OLED over I2C, refreshed every 2 s.
+ 
+| OLED row | Metric | Unit |
+|---|---|---|
+| Header | Calibration status (see below) | text |
+| IAQ | Static IAQ index | 0 to 500 |
+| Temp | Air temperature, corrected for sensor self-heating | °C |
+| Feels | Heat index (see below) | °C |
+| Humidity | Relative humidity | % |
+| Pressure | Barometric pressure | hPa |
+ 
+A row shows `---` until its first valid reading, and the IAQ output stays `---` until calibration begins. The LED matrix runs separately, switching every 4 s between `A` (ambient) and `F` (feels-like) temperature in whole °C.
+
+<img width="360" alt="AirSensorDisplay" src="https://github.com/user-attachments/assets/9f62ccf5-9fe6-4439-a7ff-15e2aa8faf98" />
+
 **Calibration.** The sensor needs time to calibrate to a baseline for clean air, this can take from several minutes to a few hours. The OLED header shows progress:
 
 | Header | Meaning |
@@ -91,7 +106,13 @@ Finally, $HI_{\,°C} = (HI - 32) \times \tfrac{5}{9}$.
 | 25 to 27 C | Orange |
 | 27 C and above | Red |
 
+https://github.com/user-attachments/assets/74c179c6-6a93-48a7-aa2d-f0f6d5db6286
+
 **Night mode.** The light sensor voltage output rises as ambient light decreases. Night mode activates when the 14-bit sensor reading exceeds 5700 and deactivates when it falls below 5300. A deadband/hysteresis gap is implemented to prevent rapid switching/flickering when the light level hovers near the switching point. The UNO R4 LED matrix stays on when night mode is active.
+
+*Test for day/night mode switching:*
+
+https://github.com/user-attachments/assets/d8ef2c43-6753-4116-a23c-d9da7b236a7a
 
 **Bluetooth.** The device advertises itself as `RP-UNO_R4_Sensor` via Bluetooth Low Energy (BLE) and sends IAQ, temperature, humidity, and pressure every 2 s while connected. Values are 32-bit floats, so choose the **float32** format in a BLE app such as nRF Connect.
 
